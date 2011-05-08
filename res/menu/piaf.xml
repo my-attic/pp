@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/compile" android:id="@+id/menu_compile" android:icon="@drawable/lego"></item>
+    <item android:title="@string/save" android:id="@+id/menu_save" android:icon="@drawable/disquettes"></item>
+    <item android:icon="@drawable/newdoc" android:id="@+id/menu_new" android:title="@string/newf"></item>
+    <item android:icon="@drawable/font_size" android:id="@+id/menu_fontsize" android:title="@string/fontsiz"></item>
+</menu>

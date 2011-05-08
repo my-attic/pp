@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:id="@+id/menu_new" 
+      android:alphabeticShortcut="n"
+      android:title="@string/new_file"
+      android:icon="@drawable/newdoc">
+</item>
+<item android:id="@+id/menu_storage"
+             android:title="@string/storage"
+             android:icon="@drawable/disquettes">
+</item>
+</menu>

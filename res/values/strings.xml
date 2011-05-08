@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_label">Pépé</string>
+    <string name="build">Build</string>
+    <string name="inspect">Inspect</string>
+    <string name="exec">Run</string>
+    <string name="cancel">Cancel</string>
+    <string name="del">Delete</string>
+    <string name="ed">Edit</string>
+    <string name="new_file">New source file</string>
+    <string name="file_name">File name</string>
+    <string name="storage">Storage</string>
+    <string name="info">Information !</string>
+    <string name="error">Error !</string>
+    <string name="runtimeError">Runtime error !</string>
+    <string name="compile">Build</string>
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="newf">New</string>
+    <string name="fontsiz">Font size</string>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="pp.compiler"
+      android:versionName="1.2" android:versionCode="2">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <application android:icon="@drawable/pepe1" android:label="@string/app_label">
+        <activity android:name=".PP"
+                  android:label="@string/app_label">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Compile"
+                  android:theme="@style/Theme"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout"
+                  android:windowSoftInputMode="stateVisible|adjustResize"> 
+        </activity>
+        <activity android:name=".Exec"
+                  android:theme="@style/Theme"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout"
+                  android:windowSoftInputMode="stateVisible|adjustResize"> 
+        </activity>
+        <activity android:name=".Piaf"></activity>
+        <activity android:name=".Inspect"></activity>
+    </application>
+    <uses-sdk android:minSdkVersion="4" />
+
+</manifest>
