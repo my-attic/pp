@@ -547,8 +547,9 @@ void OptimizeStatements(halfword_t*n);
 #define STRCOMPARE  27	// string comparison
 #define PUSHDATA	30	// push byte aligned data
 #define POPDATA		33  // pop word aligned data
+#define LENGTH		34  // lenght of a string
 
-#define LAST_RTL	33 // last predefined function in the run time library included in exe
+#define LAST_RTL	34 // last predefined function in the run time library included in exe
 
 void StartupCode();
 void InitCode();

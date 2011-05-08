@@ -1640,6 +1640,16 @@ void StartupCode()
 			0xe1a0f00e);	// mov pc,lr
 	CloseFunction((memoryword_t)TVOID);
 
+	OpenFunction(LENGTH);
+	AppendN(6,
+			0xe2801001,		// add r1,r0,#1
+			0xe4d02001,		// ldrb r2,[r0],#1
+			0xe3520000,		// cmps r2,#0
+			0x1afffffc,		// bne -4
+			0xe0400001,		// sub r0,r0,r1
+			0xe1a0f00e);	// mov pc,lr
+	CloseFunction((memoryword_t)TVOID);
+
 
 }
 

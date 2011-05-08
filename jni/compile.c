@@ -548,6 +548,8 @@ void initialize()
 
     NewSymbol("eof",sEOF,0);
     NewSymbol("eoln",sEOF,1);
+
+    NewFunc1("length",StringTypeNode,IntegerTypeNode,LENGTH);
 }
 
 int exe_size;

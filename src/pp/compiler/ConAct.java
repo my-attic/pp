@@ -13,6 +13,7 @@ import android.app.Activity;
 //import android.app.Dialog;
 //import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 //import android.view.Menu;
@@ -99,8 +100,12 @@ class ConAct extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.compile);
         con=(Console)findViewById(R.id.console);   // retrieve console view
+
+        // get metrics in order to display correctly the caracters
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
        
-        con.InitConsole(this,Piaf.fontSize[Piaf.fontSizeNb],0xffffff00,0xff0000cc);
+        con.InitConsole(this,Piaf.fontSize[Piaf.fontSizeNb] * metrics.density,0xffffff00,0xff0000cc);
 
         con.setFocusable(true);
         con.setFocusableInTouchMode(true);

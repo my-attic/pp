@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -226,7 +227,7 @@ public class Console extends View  implements GestureDetector.OnGestureListener
 	
 	// initialisation
 	// constructor
-	public void InitConsole (Activity a, int fontSize, int foreColor, int backColor)
+	public void InitConsole (Activity a, float fontSize, int foreColor, int backColor)
 	{
 	
 		activity=a;
