@@ -4,4 +4,4 @@ Pépé le compiler is a freewere standard Pascal compiler for the **Android** pl
 
 **Remark :** the creator of PP is **Philippe Guillot**, not **K33G** (only repository manager ;) )
 
-Download last PP.apk (2011-05-08) : [[http://dl.dropbox.com/u/21154141/pp.apk/PP.apk]] (tempory link pending the establishment of the website)
+Download last PP.apk (2011-05-08) : [http://dl.dropbox.com/u/21154141/pp.apk/PP.apk](http://dl.dropbox.com/u/21154141/pp.apk/PP.apk) (tempory link pending the establishment of the website)
