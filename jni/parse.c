@@ -2489,7 +2489,7 @@ void ConformantArrayPrms(memoryword_t*ty,halfword_t* h, halfword_t*t,boolean_t p
 //| T Node   | xxxx     |
 //+---------------------+
 // v = 0 : value parameter
-// v = 1 : address parameter
+// v = 1 : var parameter
 // v = 2 : procedural parameter
 // v = 3 : const non simple parameter (set or string)
 // v = 4 : non assignable value parameter
@@ -3107,48 +3107,6 @@ int CodeOffset;
    // it is used to know the label address during the node
    // generation process
 
-/*
-typedef enum {
-    mnADC,
-    mnADD,
-    mnAND,
-    mnB,
-    mnBIC,
-    mnBL,
-    mnBX,
-    mnCDP,
-    mnCMN,
-    mnCMP,
-    mnDCB,
-    mnDCW,
-    mnDCD,
-    mnEOR,
-    mnLDC,
-    mnLDM,
-    mnLCR,
-    mnMCR,
-    mnMLA,
-    mnMOV,
-    mnMRC,
-    mnMRS,
-    mnMSR,
-    mnMUL,
-    mnMVN,
-    mnORR,
-    mnRSB,
-    mnRSC,
-    mnSBC,
-    mnSTC,
-    mnSTM,
-    mnSTR,
-    mnSUB,
-    mnSWI,
-    mnSWP,
-    mnTEQ,
-    mnTST
-} MnemonicEnum_t;
-
-*/
 
 
 
@@ -4838,8 +4796,6 @@ void AssemblyLine(halfword_t*h, halfword_t*t)
 	NextToken();
 
 }
-
-
 
 
 // Assembler

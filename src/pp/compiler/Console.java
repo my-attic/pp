@@ -11,7 +11,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -422,14 +421,17 @@ public class Console extends View  implements GestureDetector.OnGestureListener
                 return false;
             }
 
+            // ascii translation of keycode values
+            // see http://developer.android.com/reference/android/view/KeyEvent.html
             private final String KEYCODE_CHARS =
                 "\000\000\000\000\000\000\000" + "0123456789*#"
-                + "\000\000\000\000\000\000\000\000\000\000"
+                + "\000\000" + // dpad down
+                "\000\000\000\000\000\000\000\000"
                 + "abcdefghijklmnopqrstuvwxyz,."
                 + "\000\000\000\000"
                 + "\011 "   // tab, space
                 + "\000\000\000" // sym .. envelope
-                + "\015\177" // enter, del
+                + "\015\010" // enter, del (67)
                 + "`-=[]\\;'/@"
                 + "\000\000\000"
                 + "+";
@@ -448,8 +450,8 @@ public class Console extends View  implements GestureDetector.OnGestureListener
                     if (keyCode >= 0 && keyCode < KEYCODE_CHARS.length()) 
                     {
                         char c = KEYCODE_CHARS.charAt(keyCode);  // traduction ascii
-                        if (c >= 32) 
-                        {  // envoie du caractère au terminal
+                        if (c>0) // >= 32)||(c==8)||(c==10)) 
+                        {  // send the character to the input buffer
                             inputChar(c);
                             //invalidate();
                         } 

@@ -126,6 +126,27 @@ boolean_t EvalBinaryReal(Op_t op, halfword_t a, halfword_t b)
     }
 }
 
+// replace the constant string of node a by the result on operation a and b
+//
+boolean_t BinaryEvalStr(Op_t op, halfword_t a, halfword_t b)
+{
+	halfword_t sa, sb; // constant strings
+	sa=Mem[a+1].i; // string a
+	sb=Mem[b+1].i; // string b
+
+	switch (op)
+	{
+	case opAdd:
+		Mem[a+1].i=ConcatStr(sa,sb);
+		return True;
+	case opLe:
+	case opLt:
+	case opEq:
+	case opNe:
+		break;
+	}
+	return False;
+}
 // replace the node a by the operation a op b
 // and free the node b
 // returns true if the computation is performed, and false elsewhere
@@ -182,6 +203,8 @@ boolean_t BinaryEval(Op_t op, BasicType_t bt, halfword_t a, halfword_t b)
         return True;
     case btReal:
         return EvalBinaryReal(op,a,b);
+    case btStr:
+    	return BinaryEvalStr(op,a,b);
     default:
         return False;
     }
@@ -196,11 +219,14 @@ halfword_t RealNodeFromInteger(int i)
     return e;
 }
 
+
+// optimize expression
 void OptimizeExpression(halfword_t*e)
 {
 	Op_t op;
 	BasicType_t bt;
 	halfword_t y;
+	halfword_t a, b; // operands of a binary operator
 
 	op=Mem[*e].nh.op;
 	bt=Mem[*e].nh.bt;
@@ -229,6 +255,13 @@ void OptimizeExpression(halfword_t*e)
 		            FreeNode(y,1);
 		            FreeNode(a,2);;
 		        }
+		        else if (bt==btStr)
+		        {	// cast char to string just require to change the basic type
+		        	// as string number below 256 are simply single char strings
+		        	Mem[a].nh.bt=btStr;
+		        	FreeNode(*e,1); // free the cast node
+		        	*e=a;  // replace const string node by transformed char param node
+		        }
                 return;
 		    }
 			if (UnaryEval(op,bt,a))
@@ -242,14 +275,15 @@ void OptimizeExpression(halfword_t*e)
 		return;
 	}
 
+
 	if (Binary(op))
 	{
 
 		CheckStack();
 		OptimizeExpression(&Mem[*e+1].hh.lo); // recursively optimize both parameters
 		OptimizeExpression(&Mem[*e+1].hh.hi);
-		halfword_t a=Mem[*e+1].hh.lo;  // get both operands
-		halfword_t b=Mem[*e+1].hh.hi;
+		a=Mem[*e+1].hh.lo;  // get both operands
+		b=Mem[*e+1].hh.hi;
 		if (Mem[a].nh.op==opConst)
 		{  // first operand is a constant
 			if (Mem[b].nh.op==opConst)

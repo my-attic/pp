@@ -395,18 +395,6 @@ int TypeSizeOf(memoryword_t t)
 }
 
 
-/*
-
-
-*/
-
-
-// type alignement is defined by 2 bits of size field
-//         	1, 3  : byte
-//         	2  : half word
-//         	0  : word
-
-
 
 /*
 procedure CanonicalType(var t:MemoryWord;t1:MemoryWord);
@@ -477,25 +465,6 @@ void MakeCompatible(memoryword_t t1, memoryword_t t2, memoryword_t*t, halfword_t
 	}
 }
 
-/*
-// check for compatible types and add cast nodes/
-// assign result type to t
-procedure ExpCompTypes(var t:MemoryWord;t1,t2:MemoryWord;var e1,e2:UInt16);
-begin
-  case t1.th.bt of
-   btReal: begin ForceRealType(t2,e2); end;
-   btStr: begin ForceStringType(t2,e2); end;
-   btPtr: if t1.th.link=Nada then t1:=t2; // force other operand if nil
-  end;
-  case t2.th.bt of
-   btReal: begin ForceRealType(t1,e1); end;
-   btStr:  begin ForceStringType(t1,e1); end;
-  end;
-  CompatibleTypes(t1,t2);
-  if t2.th.bt=btInt then t1.th.bt:=btInt; // force signed if one of them is signed
-  CanonicalType(t,t1);
-end;
-*/
 
 
 // this procedure check types t1 and t2 for binary operator op
@@ -588,142 +557,10 @@ void CheckTypes(memoryword_t t1, memoryword_t t2, Op_t op,
 		CheckCompatible(t1,Mem[t2.th.link]);
 		t->u=TBOOLEAN;
 		return;
-//	default:
-//		ReportError(OPDONOTAPPLY);
 	}
 	ReportError(OPDONOTAPPLY);
 
 }
-/*
-procedure CheckTypesBinOp(t1,t2:MemoryWord;op:opEnum;
-   var t : MemoryWord;
-   var e1,e2:UInt16);
-label 666;
-begin
-  case op of
-    opAdd:
-    begin
-      ForceStringType(t1,e1);
-      case t1.th.bt of
-        btStr,btSet,btInt,btUInt,btReal:
-           ExpCompTypes(t,t1,t2,e1,e2);
-        else goto 666;
-      end;
-    end;
-    opSub,opMul:
-      case t1.th.bt of
-        btSet,btInt,btUInt,btReal:
-           ExpCompTypes(t,t1,t2,e1,e2);
-        else goto 666;
-      end;
-    opDiv:
-      begin
-        ForceRealType(t1,e1); // this applies on real arguments only
-        ExpCompTypes(t,t1,t2,e1,e2);
-        if not IsNumType(t1)  then goto 666;
-      end;
-    opIDiv,opMod:
-      begin
-        if Not IsIntegerType(t1) or not IsIntegerType(t2) then goto 666;
-        if (t1.th.bt=btInt) or (t2.th.bt=btInt) then t.u:=tInteger
-        else t.u:=tUInteger;
-      end;
-    opShl,opShr:
-      begin
-        if Not IsIntegerType(t1) or not IsIntegerType(t2) then goto 666;
-        CanonicalType(t,t1);
-      end;
-    opAnd,opOr:
-      begin
-        case t1.th.bt of
-          btBool:
-          begin
-            if t2.th.bt<>btBool then goto 666;
-            t.u:=tBoolean;
-          end;
-          btInt,btUInt:
-          begin
-            if not IsIntegerType(t2) then goto 666;
-            if (t1.th.bt=btInt) or (t2.th.bt=btInt) then t.u:=tInteger
-            else t.u:=tUInteger;
-          end;
-          else goto 666;
-        end;
-      end;
-    opXor:
-      begin
-        case t1.th.bt of
-          btBool:
-          begin
-            if t2.th.bt<>btBool then goto 666;
-            t.u:=tBoolean;
-          end;
-          btInt,btUInt:
-          begin
-            if not IsIntegerType(t2) then goto 666;
-            if (t1.th.bt=btInt) or (t2.th.bt=btInt) then t.u:=tInteger
-            else t.u:=tUInteger;
-          end;
-          btSet:
-          begin
-            CompatibleTypes(t1,t2);
-            t:=t1;
-          end;
-          else goto 666;
-        end;
-      end;
-    opEq,opNe:
-    begin
-      // it is difficult to extend equality operator to composed type
-      // because of holes in memoy due to data alignemenet
-      if not IsSimpleType(t1) and (t1.th.bt<>btStr) and (t1.th.bt<>btSet) and (t1.th.bt<>btPtr) then goto 666;
-      ExpCompTypes(t,t1,t2,e1,e2); // any compatible type
-    end;
-    opLe,opGe:
-      begin
-        if not IsSimpleType(t1) and (t1.th.bt<>btStr) and (t.th.bt<>btSet)then goto 666;
-        ExpCompTypes(t,t1,t2,e1,e2);
-      end;
-    opLt,opGt:
-      begin
-        if not IsSimpleType(t1) and (t1.th.bt<>btStr) then goto 666;
-        ExpCompTypes(t,t1,t2,e1,e2);
-      end;
-    opIn:
-      begin
-        // check left operand compatible with base type of right operand
-        if t2.th.bt<>btSet then goto 666;
-        CompatibleTypes(t1,pMem^[t2.th.link]);
-        t.u:=tBoolean;
-      end;
-    else
-      begin
-      666:
-        ReportError(6,4); // operator does not apply
-      end;
-  end;
-end;
-
-// check type relatively to unary operator op
-procedure CheckTypeUnOp(t:MemoryWord;op:opEnum;var t1:MemoryWord);
-label 666;
-begin
-  case op of
-    opNeg:
-    begin
-      if not IsNumType(t) then goto 666;
-    end;
-    opNot:
-    begin
-      if (t.th.bt<>btBool) and not IsNumType(t) then goto 666;
-    end;
-    else 666:ReportError(6,4); // operator does not apply
-  end;
-  t1:=t;
-end;
-*/
-
-
 
 // scan the actual parameter list and returns
 // the list nodes of expressions
@@ -892,7 +729,15 @@ halfword_t ActualPrmList(halfword_t fpl, halfword_t tr)
 		do
 		{
 			v=Mem[fpl].ll.info;
-			et=Mem[Mem[fpl+1].hh.lo]; // expected type
+			// assign the expected type
+			if (Mem[fpl+1].hh.lo==NADA)
+			{  // if value is NADA, then it is a void parameter, i.e. a non typed var formal parameter
+				et.i=TVOID;
+			}
+			else
+			{  // else this node contains the expected type
+				et=Mem[Mem[fpl+1].hh.lo]; // expected type
+			}
 			switch(v)
 			{
 			case 0:
@@ -911,7 +756,7 @@ halfword_t ActualPrmList(halfword_t fpl, halfword_t tr)
 				CheckAssignableVar(&at,&e,v);
 				if (et.th.bt==btStr)
 				{ // all string type are var compatibles
-					if (at.th.bt!=btStr) /*then 66:*/ReportError(TYPEMISMATCH); // type mismatch
+					if (at.th.bt!=btStr) ReportError(TYPEMISMATCH); // type mismatch
 				}
 				else if (et.th.bt!=btVoid) // untyped formal parameter
 					// in this case, all variables are acceptede
@@ -1322,7 +1167,7 @@ void OptimizedExpression(memoryword_t* ty, halfword_t*e, halfword_t id)
 void SetConstructor(memoryword_t*t, halfword_t*z)
 {
 
-	halfword_t x;  // Componenet type
+	halfword_t x;  // Component type
 	halfword_t s;  // set size
 	halfword_t l;  // descriptor list
 	halfword_t n;  // next in descriptor list

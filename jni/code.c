@@ -747,7 +747,7 @@ void EAFunc(EA_t*ea, halfword_t la)
 	}
 }
 
-void CodeConst(halfword_t e,int nr);
+static void CodeConst(halfword_t e,int nr);
 void EAVarAccess(EA_t*ea, halfword_t v);
 void PushEx(halfword_t e, BasicType_t bt, byte_t algn, int s);
 static void Subroutine(halfword_t f, word_t code);
@@ -1231,10 +1231,10 @@ static void CheckConsts(int CPtr)
 			return;
 		}
 		s=Mem[l].ll.info;  // get const info
-		if (s<256) CPtr++; // if it is a single char, increment code ptr
+		if (s<MAXCHAR) CPtr++; // if it is a single char, increment code ptr
 		else
 		{
-			int len=StrStart[s-1]-StrStart[s]; // length in bytes
+			int len=StrStart[s-MAXCHAR]-StrStart[s-MAXCHAR+1]; // length in bytes
 			CPtr+=(len+4)>>2; // increment by len in words, including zero
 		}
 		l=Mem[l].ll.link;
@@ -2555,7 +2555,7 @@ void NewLine(halfword_t f)
 
 // code to load a code constant address e in register nr
 // append the constant in const list
-void CodeConst(halfword_t e,int nr)
+static void CodeConst(halfword_t e,int nr)
 {
 	  Mem[e].ll.info=Mem[e+1].i; // string number
 	  Mem[e].ll.link=ConstList;
@@ -2757,10 +2757,17 @@ void OpenProc(byte_t rw, halfword_t f, halfword_t n, int s)
 void PushStrCode(halfword_t e, int s)
 {
 	halfword_t la;
+	halfword_t ns; // constant string number
 	EA_t ea;
 	switch(Mem[e].nh.op)
 	{
 	case opConst:
+		ns=Mem[e+1].i;
+		if (ns<MAXCHAR)
+		{  // if it is a single char string constant
+			MovImm(0,ns);
+			goto pushr0;
+		}
 		CodeConst(e,1); // source address in r1
 	copytostack:
 		AppendN(2,
@@ -2774,6 +2781,7 @@ void PushStrCode(halfword_t e, int s)
 		goto copytostack;
 	case opCast:  // cast char to sting
 		REx(0,Mem[e].ll.link); // char in r0
+	pushr0:
 		AppendN(2,
 				0xe24dDf00+(s >> 2), // SUB sp,sp,s ; destination address
 				0xe50d0000);  // STR r0,[sp]
@@ -2894,6 +2902,7 @@ void SetSCons(halfword_t rd, halfword_t e, int s)
 	halfword_t cc; // constant part
 	halfword_t lo,hi; // intervall bounds
 	cc=Mem[e+1].hh.lo;
+
 	PushRegs(1 << rd);
 	if (cc==NADA)
 	{ // no constant part then clear memory
@@ -3899,150 +3908,9 @@ int StatementCode(halfword_t n)
 	return lnk;
 }
 
-
-
-
-/*
-
-
-
-
-
-procedure SetCmp(subset:boolean;order:boolean;eq:boolean);
-var
-  x,y : UInt16;
-begin
-  with pMem^[e+1] do
-    if order then begin x:=hh.lo; y:=hh.hi end
-    else begin x:=hh.hi; y:=hh.lo end;
-  SetCompare(y,x,pMem^[e].qqqq.b2,subset);
-  if not eq then AppendCode($e2200001); // eor r0,r0,1
-  MovRdRn(rd,0);
-end;
-
-
-
-
-
-// the frame sprocedure loks like this
-// +-----------------------+
-// | Frame pointer level 2 | <-- FP + PrmSize + 4
-// |-----------------------|
-// | Frame pointer level 3 |
-// |-----------------------|
-// :                       :
-// |-----------------------|
-// |   last parameter      |
-// !-----------------------|
-// :                       :
-// |-----------------------|
-// |   first parameter     | <-- FP + 8
-// |-----------------------|
-// |  previous frame ptr   |
-// |-----------------------|
-// |   return address      |  <-- current frame ptr
-// |-----------------------|
-// |     locals            |
-// :                       :
-// :                       :  <-- SP
-// +-----------------------+
-
-
-
-
-// assign to ea the effective address of a pointer
-// return function
-// la is the attribute list
-// assumes v node is a opPCall
-procedure EAFunc(var ea:eaType;la:UInt16);
-label 666;
-begin
-  if la=Nada then goto 666;
-  case pMem^[la].ll.info of
-    0: // index of a string
-    begin // the function call has been forced in stack
-      MovRdRn_(0,13);
-      ea.bt:=btStr;
-      ea.RegOffset:=-1;
-      ea.offset:=0;
-      ea.BaseReg:=0;
-      ea.sz:=4;
-      ea.shift:=0;
-      AttrList_(la,ea);
-      AddImm_(13,13,StringType.th.link);
-    end;
-    1: // pointer access
-    begin
-      ea.bt:=btPtr;
-      ea.RegOffset:=-1;
-      ea.offset:=0;
-      ea.BaseReg:=0;
-      ea.sz:=4;
-      ea.shift:=0;
-      AttrList_(pMem^[la].ll.link,ea);
-    end;
-    else 666:ReportError(100,101);
-  end;
-end;
-
-
-
-
-/ read type bt from text file f to variable v
-procedure ReadText(bt:BasicTypeEnum;f,v:UInt16);
-var ea : eaType;
-    nf : UInt16;  // function number
-    r  : Int16;   // temporary register
-    short : boolean;
-begin
-  short:=false;
-  case bt of // check size of destination if integer type
-    btInt,btUInt: if pMem^[pMem^[v+1].hh.lo].qqqq.b2<4 then
-    begin
-      short:=true; // assignement of integer to a smaller location
-      AddImm(13,13,-4); // make room in stack for integer
-      MovRdRn(1,13);
-    end;
-  end;
-  if not short then
-  begin
-    EAVar(ea,v);
-    LEA_(1,ea);
-  end;
-  PushRegs(2);
-  if f=Nada then // output
-  begin
-    SystemVar(ea,-56);
-  end
-  else  EAVar(ea,f);
-  LEA_(0,ea);
-  PopRegs(2);
-  case bt of
-    btChar: nf:=LinkSize-69;
-    btStr:  nf:=LinkSize-70;
-    btInt,btUInt: nf:=LinkSize-72;
-    btReal: nf:=LinkSize-73;
-    else ReportError(6,103);
-  end;
-  Call(nf,$eb000000);
-  if short then
-  begin
-    EAVar(ea,v);  // get destination address
-    r:=GetRegEA(ea); // get register
-    PopRegs_(1 shl r);
-    STR(r,ea);
-  end;
-end;
-
-
-
-
-
-
-
-
-
-*/
+///////////////////////////////////////////////////////////////////////////////
+// Link
+//////////////////////////////////////////////////////////////////////////////
 
 // array of executable
 word_t* pExe;

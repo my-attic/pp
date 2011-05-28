@@ -150,36 +150,8 @@ static void CheckDirChar(char e)
 	if (Pool[++TkPtr]!=')') ReportError(EXPECTEDCHAR,')');
 }
 
-// scan directive parameter
-// filter1 is for testing the first character
-// filter for others
-/*
-procedure ScanDirParam(e:UInt16;function filter1(c:char):boolean;function filter(c:char):boolean);
-var c : char;
-begin
-  c:=SkipBlanks;
-  IdPtr:=TkPtr;
-  if not filter1(c) then ReportError(3,ord(c));
-  TkPtr:=TkPtr+1;
-  c:=pPool^[TkPtr];
-  while filter(c) do
-  begin
-    TkPtr:=TkPtr+1;
-    c:=pPool^[TkPtr];
-  end;
-  LenId:=TkPtr-IdPtr;
-  CheckDirChar(e);
-end;
-*/
-/*
-// scan for a directive identifier
-procedure ScanDirID(e:UInt16);
-var i : Int16;
-begin
-  ScanDirParam(e,IsLetter,IsIDChar_);
-  for i:=0 to LenID-1 do pPool^[IdPtr+i]:=lowcase(pPool^[IdPtr+i]);
-end;
-*/
+
+
 // scan for a directive identifier
 static void ScanDirID(char e)
 {
@@ -212,80 +184,6 @@ static void ScanFileName(char e)
 	LenID=TkPtr-IdPtr;
 	CheckDirChar(e);
 }
-/*
-// scan directive number
-function ScanDirNumber:UInt32;
-
-label 11; // bad char error
-var
-  c : char;
-  n : UInt32;  // value to return
-  x : integer;
-begin
-  ScanDirNumber:=n;
-  c:=SkipBlanks;
-  if c='$' then
-  begin
-    TkPtr:=TkPtr+1;
-    c:=pPool^[TkPtr];
-    x:=HexaDigit(c);
-    if x<0 then goto 11;
-    n:=x;
-    TkPtr:=TkPtr+1;
-    x:=HexaDigit(pPool^[TkPtr]);
-    while x>=0 do
-    begin
-      n:=(n shl 4)+x;
-      TkPtr:=TkPtr+1;
-      x:=HexaDigit(pPool^[TkPtr]);
-    end;
-  end
-  else
-  begin
-    if not IsDigit(c) then 11: ReportError(3,ord(c)); // unexpected char
-    n:=ord(c)-ord('0');
-    TkPtr:=TkPtr+1;
-    c:=pPool^[TkPtr];
-    while IsDigit(c) do
-    begin
-      // check overrflow to do
-      n:=(n shl 1)+(n shl 3)+ord(c)-ord('0');
-      TkPtr:=TkPtr+1;
-      c:=pPool^[TkPtr];
-    end;
-  end;
-  ScanDirNumber:=n;
-end;
-
-
-// scan for parameter of AppType and AppCreator directives
-// 'abcd'
-function ScanDirAscii32:UInt32;
-label 12;
-var
-   n : UInt32;  // value to return
-   c : char;
-begin
-  c:=SkipBlanks;
-  if c<>'''' then ReportError(0,ord(''''));
-  TkPtr:=TkPtr+1;
-  n:=0;
-  while true do
-  begin
-    c:=pPool^[TkPtr];
-    if c='''' then
-    begin
-      if pPool^[TkPtr+1]<>'''' then goto 12;
-    end;
-    if c<' ' then ReportError(6,28); // unexpected end of line
-    TkPtr:=TkPtr+1;
-    n:=(n shl 8)+ord(c);
-  end;
-12:
-  TkPtr:=TkPtr+1;
-  ScanDirAscii32:=n;
-end;
-*/
 
 static halfword_t NewString(); // return a new string with the current identifier
 static boolean_t MatchString(halfword_t s); // check if string s matches with the current identifier
@@ -444,103 +342,6 @@ void Directive(char c1)
 	default:
 		ReportError(NOTYETIMPLEM);
 	}
-
-/*
-procedure Directive(e:UInt16);
-//label 11;
-var
-  x : Int16;
-  n : UInt32;
-begin
-  x:=ScanDirective(e);
-  if ((x<=1) or (x>=6)) and (InputState>=SkipElse) then
-    // if input state is skip state, then ignore directive
-    SkipToEndOfDir(e)
-  else case x of
-    -1: ReportError(10,0); // unknown directive
-    0,1: // define,undef
-    2,3: // ifdef,ifndef
-    4: // else
-   5: // endif
-     6: // i (include)
-     7: // cleanup
-    begin
-      CheckDirChar(e);
-      Cleanup:=true;
-    end;
-    8: // version
-    begin
-      ScanDirParam(e,AnyAscii,AnyAscii);
-      CheckDirChar(e);
-      IdToString(Version);
-    end;
-    9: // appname
-    begin
-      ScanDirParam(e,AnyAscii,AnyAscii);
-      CheckDirChar(e);
-      IdToString(AppName);
-    end;
-    10: // r : include resource
-    begin
-      ScanDirParam(e,IsDBNameChar,IsDBNameChar);
-      ResourceFile;
-      CheckDirChar(e);
-    end;
-    11: // SHLIndex
-    begin
-      SHLIndex:=ScanDirNumber;
-      CheckDirChar(e);
-    end;
-    12: // AppType
-    begin
-      PRCType:=ScanDirAscii32;
-      CheckDirChar(e);
-    end;
-    13: // AppCreator
-    begin
-      PRCCreator:=ScanDirAscii32;
-      CheckDirChar(e);
-    end;
-    14: // MaxString
-    begin // value is rounded to multiple of 16
-      n:=(ScanDirNumber+15) and $fffffff0;
-      if (n>4096) then ReportError(6,31);
-      StringType.th.link:=n;
-      CheckDirChar(e);
-    end;
-    15: // Hidden
-    begin
-      PRCAttr:=PRCAttr or $0100;
-      CheckDirChar(e);
-    end;
-    16: // ResType
-    begin
-      CodeResType:=ScanDirAscii32;
-      CheckDirChar(e);
-    end;
-    17: // ResID
-    begin
-      CodeResID:=ScanDirNumber;
-      CheckDirChar(e);
-    end;
-    18: // ARMv5
-    begin
-      ARMVersion:=500;
-      CheckDirChar(e);
-    end;
-    19: // PRCName
-    begin
-    begin
-      ScanDirParam(e,AnyAscii,AnyAscii);
-      CheckDirChar(e);
-      IdToString(PRCName);
-    end;
-    end;
-  end;
-end;
-
- */
-
 }
 
 
@@ -868,7 +669,7 @@ void ScanProgName()
 //  Pool ...xxxxxxxxxxxxxxx]xxxxxxxxxxxxxxxxxxxxxxxxxxx]xxxxxxxxxxxxxxx]
 //    ...        StrStart[2]^                StrStart[1]^    StrStart[0]^
 //                 s=257                        s=256       not assigned
-// MAXCHAR = 125
+// MAXCHAR = 256
 
 
 halfword_t StrPtr;  // denotes the first free string to allocate
@@ -905,6 +706,13 @@ void InitStrings()
 	  StrStart[0]=POOL_SIZE; // end of first string number
 }
 
+// returns the length of string s
+int StringLen(halfword_t s)
+{
+	if (s<MAXCHAR) return 1; // single character string
+	return StrStart[s-MAXCHAR]-StrStart[s-MAXCHAR+1]; // length in bytes
+}
+
 // returns True if the string s mathches with the currend ID
 static boolean_t MatchString(halfword_t s)
 {
@@ -921,6 +729,33 @@ static boolean_t MatchString(halfword_t s)
 	return True;
 }
 
+// string concatenation
+// return a new string which is the concatenation of string a and string b
+halfword_t ConcatStr(halfword_t sa, halfword_t sb)
+{
+	int lb,la; // length of the strings
+	int i;
+	halfword_t result;
+	if (sa==0) return sb;  // empty string is neutral element
+	if (sb==0) return sa;
+	lb=StringLen(sb); // length of sb
+	la=StringLen(sa); // length of sa
+	// check string number
+	if (StrPtr>=STRMAX) ReportError(OUTOFMEMORY); // to much strings
+	// allocate room for characters
+	HiPoolMin-=la+lb;
+	if (HiPoolMin<LoPoolMax) ReportError(OUTOFMEMORY); // no room in pool
+	StrStart[StrPtr]=HiPoolMin;
+	result=StrPtr+MAXCHAR-1;  // value of currently constructed string
+	StrPtr++;  // increment string number
+	// copy characters
+	if (sa<MAXCHAR) Pool[HiPoolMin]=sa;
+	else for (i=0;i<la;i++) Pool[HiPoolMin+i]=Pool[StrStart[sa-MAXCHAR+1]+i];
+	if (sb<MAXCHAR) Pool[HiPoolMin+la]=sb;
+	else for (i=0;i<lb;i++) Pool[HiPoolMin+la+i]=Pool[StrStart[sb-MAXCHAR+1]+i];
+	// assign new string value to node a
+	return result;
+}
 
 //--------------------------------
 // the hash table
@@ -1088,46 +923,7 @@ void NewID(halfword_t x,IDEnum_t idt)
 	HTable[x].symb.l=sLevel;
 }
 
-/*
-procedure NewID_(x:UInt16;idt:idEnum);
-label 10, // new identifier
-      11, // error case
-      99; // exit proc
-//var top : integer;
-begin
-  with pHTable^[x] do
-  begin
-    if symb.s=sUndef then goto 10; // undefined identifier
-    // is it current procedure identifier ?
-    // this must be checked specially before level checking
-    // because identifier declared in the bloc are one level more
-    // than the procedure name
-    if (sLevel>1) and (x=CurFID) then goto 11;
-    if symb.l<sLevel then goto 10;  // identifier of a previouiuos bloc
-    // program parameters accepted as globak variable in main bloc
-    if (sLevel=1) and (idt=sVar) and (symb.s=sParam) then
-    begin
-      goto 10;
-    end;
-  11:
-    ReportError(5,x); // duplicate identifier
-  10:
-    if sLevel>1 then PushSymbol_(x);
-//    begin // push identifier
-//      top:=pMem^[HiMemMin].i;
-//      HiMemMin:=HiMemMin-2;
-//      Room;
-//      pMem^[HiMemMin+1].sy:=symb;
-//      pMem^[HiMemMin+2].hh.lo:=x;
-//      pMem^[HiMemMin].i:=top; // restaure top
-//    end;
-    symb.s:=idt;
-    symb.l:=sLevel;
-  end;
-99:
-end;
 
-*/
 
 halfword_t IDVal;      // current symbol value set by GetXID
 unsigned char IDLevel; // curent symbol level set by GetXID

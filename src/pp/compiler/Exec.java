@@ -1,9 +1,10 @@
 package pp.compiler;
-/////////
-//
-// Execute
-//
-///////////////////////////////////////
+//--------------------------\
+//                          |
+//         Execute          |
+//                          |
+//--------------------------/
+
 
 
 import android.app.AlertDialog;
@@ -12,7 +13,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 
-
+// the exec class extends the console activity
 public class Exec extends ConAct
 {
 	final static int EXEC_RESULT = 1;

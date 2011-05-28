@@ -11,39 +11,27 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int clavier=0x7f020000;
-        public static final int clavier_pale=0x7f020001;
-        public static final int danger=0x7f020002;
-        public static final int disquettes=0x7f020003;
-        public static final int doc=0x7f020004;
-        public static final int engrenage=0x7f020005;
-        public static final int engrenage_pale=0x7f020006;
-        public static final int error=0x7f020007;
-        public static final int folder=0x7f020008;
-        public static final int font_size=0x7f020009;
-        public static final int gear16=0x7f02000a;
-        public static final int ic_tb_build=0x7f02000b;
-        public static final int ic_tb_edit=0x7f02000c;
-        public static final int ic_tb_exec=0x7f02000d;
-        public static final int icon=0x7f02000e;
-        public static final int iconpp=0x7f02000f;
-        public static final int info=0x7f020010;
-        public static final int lego=0x7f020011;
-        public static final int lego_pale=0x7f020012;
-        public static final int newdoc=0x7f020013;
-        public static final int pepe=0x7f020014;
-        public static final int pepe1=0x7f020015;
-        public static final int pepe2=0x7f020016;
-        public static final int text=0x7f020017;
-        public static final int uparrow=0x7f020018;
+        public static final int danger=0x7f020000;
+        public static final int disquettes=0x7f020001;
+        public static final int doc=0x7f020002;
+        public static final int engrenage=0x7f020003;
+        public static final int error=0x7f020004;
+        public static final int font_size=0x7f020005;
+        public static final int icon=0x7f020006;
+        public static final int info=0x7f020007;
+        public static final int info1=0x7f020008;
+        public static final int lego=0x7f020009;
+        public static final int newdoc=0x7f02000a;
+        public static final int pepe1=0x7f02000b;
     }
     public static final class id {
         public static final int console=0x7f070000;
         public static final int inspect=0x7f070001;
-        public static final int menu_compile=0x7f070005;
-        public static final int menu_fontsize=0x7f070007;
+        public static final int menu_about=0x7f070005;
+        public static final int menu_compile=0x7f070006;
+        public static final int menu_fontsize=0x7f070008;
         public static final int menu_new=0x7f070003;
-        public static final int menu_save=0x7f070006;
+        public static final int menu_save=0x7f070007;
         public static final int menu_storage=0x7f070004;
         public static final int piaf=0x7f070002;
     }
@@ -59,6 +47,7 @@ public final class R {
         public static final int piaf=0x7f060001;
     }
     public static final class string {
+        public static final int about=0x7f040012;
         public static final int app_label=0x7f040000;
         public static final int build=0x7f040001;
         public static final int cancel=0x7f040004;

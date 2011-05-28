@@ -10,4 +10,8 @@
              android:title="@string/storage"
              android:icon="@drawable/disquettes">
 </item>
+<item android:id="@+id/menu_about"
+             android:title="@string/about"
+             android:icon="@drawable/info1">
+</item>
 </menu>

@@ -179,7 +179,7 @@ char* split(const char*path)
 //-------------
 static void prompt(char*name)
 {
-	emitString("This is Androïd Pascal compiler v 1.0\nFreeware (c)2010 by Philippe Guillot\n");
+	emitString("Pépé le compiler v 1.03\nFreeware (c)2010-2011\nby Philippe Guillot\n");
 	sprintf(message,"Compiling \"%s\"...\n",name);
 	emitString(message);
 }
@@ -519,7 +519,7 @@ void initialize()
 	NewInline1("exp",RealTypeNode,RealTypeNode,-4,2,0xE1A0E00F,0xE599F000+REALEXP);
 	NewInline1("sin",RealTypeNode,RealTypeNode,-4,2,0xE1A0E00F,0xE599F000+REALSIN);
 	NewInline1("cos",RealTypeNode,RealTypeNode,-4,2,0xE1A0E00F,0xE599F000+REALCOS);
-	NewInline1("atan",RealTypeNode,RealTypeNode,-4,2,0xE1A0E00F,0xE599F000+REALATAN);
+	NewInline1("arctan",RealTypeNode,RealTypeNode,-4,2,0xE1A0E00F,0xE599F000+REALATAN);
 
 	NewFunc1("halt",IntegerTypeNode,NADA,HALT);
 
@@ -595,7 +595,7 @@ void terminate()
 // génération d'un message du genre
 // 1352 lines compiled (2.3 sec)
 // brol.exe (256 bytes) created
-post_message()
+void post_message()
 {
 	clock_t time=clock()-start_time; // lecture de l'heure en clocks
 	long time_sec,time_hun;          // secondes, centièmes de seconde

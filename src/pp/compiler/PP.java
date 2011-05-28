@@ -1,10 +1,10 @@
 package pp.compiler;
 
-//------------------------------\
-//                              !
-// module principal pour PéPé   !
-//                              !
-//------------------------------/
+//--------------------------\
+//                          !
+//   main class for Pépé    !
+//                          !
+//--------------------------/
 
 
 import java.io.File;
@@ -16,6 +16,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.ContextMenu;
@@ -319,6 +320,9 @@ public class PP extends ListActivity // implements View.OnCreateContextMenuListe
         case R.id.menu_new:
         	showDialog(DIALOG_NEW_FILE);
             break;
+        case R.id.menu_about:
+        	showDialog(DIALOG_ABOUT);
+            break;
         }
         return super.onOptionsItemSelected(item);
     } 
@@ -334,6 +338,7 @@ public class PP extends ListActivity // implements View.OnCreateContextMenuListe
     final private static int DIALOG_NEW_FILE = 1;
     final private static int ALERT_INFO   = 2;
     final private static int ALERT_DELETE = 3;
+    final private static int DIALOG_ABOUT = 4;
     
     @Override
     protected Dialog onCreateDialog(int id) 
@@ -437,6 +442,31 @@ public class PP extends ListActivity // implements View.OnCreateContextMenuListe
                }
             })
         	.setNegativeButton("No", new DialogInterface.OnClickListener() 
+        	{
+               public void onClick(DialogInterface dialog, int id) 
+               {
+                   dialog.cancel();
+               }
+            });
+        	alert=builder.create();
+        	return alert;
+        case DIALOG_ABOUT:
+        	String vstr;
+        	// get the version string in the manifest file
+        	try
+        	{
+        		vstr=getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        	}
+        	catch(NameNotFoundException e)
+        	{
+        		vstr="???";
+        	}
+        	builder = new AlertDialog.Builder(this);
+        	builder.setTitle("Pépé le compiler")
+        	.setIcon(R.drawable.pepe1) 
+        	.setMessage("version "+vstr+
+        			"\nFreeware by Philippe Guillot\n(c) 2010-2011\nhttps://github.com/k33g/pp\nhttps://github.com/k33g/pp/wiki")
+        	.setNegativeButton("OK", new DialogInterface.OnClickListener() 
         	{
                public void onClick(DialogInterface dialog, int id) 
                {

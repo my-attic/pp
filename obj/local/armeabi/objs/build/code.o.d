@@ -1,5 +1,5 @@
-/cygdrive/c/cygwin/home/Archibald/pp/obj/local/armeabi/objs/build/code.o: \
- /cygdrive/c/cygwin/home/Archibald/pp/jni/code.c \
+/cygdrive/c/cygwin/home/Archibald/PP/obj/local/armeabi/objs/build/code.o: \
+ /cygdrive/c/cygwin/home/Archibald/PP/jni/code.c \
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/stdio.h \
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/sys/cdefs.h \
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -15,7 +15,7 @@
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/linux/types.h \
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/machine/kernel.h \
  /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/sys/sysmacros.h \
- /cygdrive/c/cygwin/home/Archibald/pp/jni/pp.h
+ /cygdrive/c/cygwin/home/Archibald/PP/jni/pp.h
 
 /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/stdio.h:
 
@@ -47,4 +47,4 @@
 
 /cygdrive/c/cygwin/home/Archibald/android-ndk-r5b/platforms/android-4/arch-arm/usr/include/sys/sysmacros.h:
 
-/cygdrive/c/cygwin/home/Archibald/pp/jni/pp.h:
+/cygdrive/c/cygwin/home/Archibald/PP/jni/pp.h:

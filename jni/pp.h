@@ -409,6 +409,8 @@ extern halfword_t ArmVersion;
 #define MAXCHAR 256
 extern halfword_t StrStart[STRMAX];
 void InitStrings();
+int StringLen(halfword_t s);
+halfword_t ConcatStr(halfword_t sa, halfword_t sb);
 
 
 // The hash table
@@ -547,9 +549,10 @@ void OptimizeStatements(halfword_t*n);
 #define STRCOMPARE  27	// string comparison
 #define PUSHDATA	30	// push byte aligned data
 #define POPDATA		33  // pop word aligned data
-#define LENGTH		34  // lenght of a string
+#define LENGTH		36  // lenght of a string
+// Next one is 39 !
 
-#define LAST_RTL	34 // last predefined function in the run time library included in exe
+#define LAST_RTL	36 // last predefined function in the run time library included in exe
 
 void StartupCode();
 void InitCode();

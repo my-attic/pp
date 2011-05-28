@@ -113,11 +113,12 @@ void GetLine()
 		case 10: // return
 			exit_flag=1;
 			break;
-		case 8: // backspace
+		case 8:
+		//case 127: // backspace
 			if (con.Last>0)
 			{
 				con.Last--;
-				emitChar(8);
+				emitChar(c);
 			}
 			break;
 		default:
@@ -448,7 +449,7 @@ int Rewrite(fileDesc_t*f, uint16_t nBytes, char*name)
 // 168
 void Close(fileDesc_t*f)
 {
-	fclose(f->file);
+	if (f->file!=NULL) fclose(f->file);
 }
 
 
